@@ -1,0 +1,282 @@
+{
+    "compilation_params": {
+        "loss": {
+            "bins_mass": [
+                [
+                    "distribution_losses.AdaptedCrossentropy",
+                    {
+                        "bin_size": 0.5,
+                        "min_rating": 0.5
+                    }
+                ]
+            ]
+        },
+        "metrics": {
+            "bins_mass": [
+                [
+                    "rating_metrics.AdaptedCrossentropy",
+                    {
+                        "bin_size": 0.5,
+                        "min_rating": 0.5
+                    }
+                ]
+            ],
+            "bins_mode": [
+                "rmse",
+                [
+                    "rating_metrics.AdaptedAccuracy",
+                    {
+                        "bin_size": 0.5
+                    }
+                ]
+            ],
+            "mean": [
+                "rmse",
+                [
+                    "rating_metrics.AdaptedAccuracy",
+                    {
+                        "bin_size": 0.5
+                    }
+                ]
+            ],
+            "median": [
+                "rmse",
+                [
+                    "rating_metrics.AdaptedAccuracy",
+                    {
+                        "bin_size": 0.5
+                    }
+                ]
+            ],
+            "mode": [
+                "rmse",
+                [
+                    "rating_metrics.AdaptedAccuracy",
+                    {
+                        "bin_size": 0.5
+                    }
+                ]
+            ]
+        },
+        "optimizer": {
+            "learning_rate": 0.001,
+            "obj": "keras.optimizers.Adam"
+        }
+    },
+    "data_params": {
+        "extra": {
+            "TEST_RANKING_DS_PATH": "../test/*.csv",
+            "VALIDATION_RANKING_DS_PATH": "validation/*.csv"
+        },
+        "general": {
+            "batch_size": 8192,
+            "label_name": "rating",
+            "shuffle_buffer_size": 10000
+        },
+        "params": {
+            "dataset": "ml-10m",
+            "format": "csv",
+            "num_splits_inner": 1,
+            "num_splits_outer": 10,
+            "strategy": "user_random",
+            "test_pc": 1,
+            "validation_pc": 0.05,
+            "xval_inner": false,
+            "xval_outer": true
+        },
+        "test": {
+            "shuffle": false
+        },
+        "train": {
+            "shuffle": true
+        },
+        "validation": {
+            "shuffle": false
+        }
+    },
+    "evaluation_params": {
+        "callbacks": [
+            {
+                "ExportEvalPredictionsCallback": {
+                    "params": {
+                        "batch_size": 4096,
+                        "export_path": null,
+                        "run_on_test_end": true,
+                        "validation_data": null
+                    }
+                }
+            }
+        ]
+    },
+    "meta_params": {
+        "guided_search_optimization": {
+            "monitor": "val_beta_mean_root_mean_squared_error",
+            "type": "min"
+        },
+        "log_root": "logs"
+    },
+    "model_params": {
+        "bias_initializers": [
+            [
+                "keras.initializers.RandomNormal",
+                {
+                    "mean": 0.5,
+                    "stddev": 0.05
+                }
+            ],
+            [
+                "keras.initializers.RandomNormal",
+                {
+                    "mean": 0.5,
+                    "stddev": 0.05
+                }
+            ]
+        ],
+        "bias_mode": 2,
+        "bin_size": 0.5,
+        "initializer": {
+            "config": {
+                "stddev": 0.20685901542551885
+            },
+            "obj": "tf.keras.initializers.RandomNormal"
+        },
+        "max_rating": 5,
+        "min_rating": 0.5,
+        "model": "LBD",
+        "num_hidden": 512,
+        "num_items": 10678,
+        "num_users": 69879,
+        "regularize_activity": true,
+        "regularizer": {
+            "l2": 0.19907991115701387,
+            "obj": "tf.keras.regularizers.L2"
+        },
+        "split_embeddings": false,
+        "upsilon_layer_id": 3
+    },
+    "param_remapping": [
+        [
+            [
+                "training_params",
+                "callbacks",
+                1,
+                "RankingEvaluationCallback",
+                "params",
+                "data_path"
+            ],
+            [
+                "data_params",
+                "extra",
+                "VALIDATION_RANKING_DS_PATH"
+            ]
+        ],
+        [
+            [
+                "evaluation_params",
+                "callbacks",
+                0,
+                "ExportEvalPredictionsCallback",
+                "params",
+                "data_path"
+            ],
+            [
+                "data_params",
+                "extra",
+                "TEST_RANKING_DS_PATH"
+            ]
+        ],
+        [
+            [
+                "evaluation_params",
+                "callbacks",
+                0,
+                "ExportEvalPredictionsCallback",
+                "params",
+                "export_path"
+            ],
+            [
+                "meta_params",
+                "run_log_path"
+            ]
+        ]
+    ],
+    "training_params": {
+        "callbacks": [
+            {
+                "EarlyStopping": {
+                    "min_delta": 0.0005,
+                    "monitor": "val_beta_mean_root_mean_squared_error",
+                    "patience": 10,
+                    "restore_best_weights": true,
+                    "verbose": true
+                }
+            },
+            {
+                "RankingEvaluationCallback": {
+                    "params": {
+                        "batch_size": 1000,
+                        "metrics": {
+                            "mean": [
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mean_ndcg@10",
+                                        "topn": 10
+                                    }
+                                ],
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mean_ndcg@3",
+                                        "topn": 3
+                                    }
+                                ]
+                            ],
+                            "median": [
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "median_ndcg@10",
+                                        "topn": 10
+                                    }
+                                ],
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "median_ndcg@3",
+                                        "topn": 3
+                                    }
+                                ]
+                            ],
+                            "mode": [
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mode_ndcg@10",
+                                        "topn": 10
+                                    }
+                                ],
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mode_ndcg@3",
+                                        "topn": 3
+                                    }
+                                ]
+                            ]
+                        },
+                        "name": "val"
+                    }
+                }
+            }
+        ],
+        "epochs": 50,
+        "verbose": 1
+    }
+}

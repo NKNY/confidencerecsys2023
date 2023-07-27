@@ -1,0 +1,261 @@
+{
+    "compilation_params": {
+        "loss": {
+            "bins_mass": [
+                [
+                    "distribution_losses.AdaptedCrossentropy",
+                    {
+                        "bin_size": 0.5,
+                        "min_rating": 0.5
+                    }
+                ]
+            ]
+        },
+        "metrics": {
+            "bins_mean": [
+                [
+                    "rmse",
+                    {
+                        "max_rating": 5,
+                        "min_rating": 0.5
+                    }
+                ],
+                [
+                    "rating_metrics.AdaptedAccuracy",
+                    {
+                        "bin_size": 0.5
+                    }
+                ]
+            ],
+            "bins_mode": [
+                [
+                    "rmse",
+                    {
+                        "max_rating": 5,
+                        "min_rating": 0.5
+                    }
+                ],
+                [
+                    "rating_metrics.AdaptedAccuracy",
+                    {
+                        "bin_size": 0.5
+                    }
+                ]
+            ]
+        },
+        "optimizer": {
+            "learning_rate": 0.0001260488674485279,
+            "obj": "keras.optimizers.Adam"
+        }
+    },
+    "data_params": {
+        "extra": {
+            "TEST_RANKING_DS_PATH": "../test/*.csv",
+            "VALIDATION_RANKING_DS_PATH": "validation/*.csv"
+        },
+        "general": {
+            "batch_size": 8192,
+            "label_name": "rating",
+            "shuffle_buffer_size": 10000
+        },
+        "params": {
+            "dataset": "ml-10m",
+            "format": "csv",
+            "num_splits_inner": 1,
+            "num_splits_outer": 10,
+            "strategy": "user_random",
+            "test_pc": 1,
+            "validation_pc": 0.05,
+            "xval_inner": false,
+            "xval_outer": true
+        },
+        "test": {
+            "shuffle": false
+        },
+        "train": {
+            "shuffle": true
+        },
+        "validation": {
+            "shuffle": false
+        }
+    },
+    "evaluation_params": {
+        "callbacks": [
+            {
+                "ExportEvalPredictionsCallback": {
+                    "params": {
+                        "batch_size": 4096,
+                        "export_path": null,
+                        "run_on_test_end": true,
+                        "validation_data": null
+                    }
+                }
+            }
+        ]
+    },
+    "meta_params": {
+        "guided_search_optimization": {
+            "monitor": "val_bins_mean_root_mean_squared_error",
+            "type": "min"
+        },
+        "log_root": "logs",
+        "mixed_precision_policy": "float32"
+    },
+    "model_params": {
+        "beta_mode": 1,
+        "initializers": {
+            "iid_features": {
+                "config": {
+                    "stddev": 0.003384308280617222
+                },
+                "obj": "tf.keras.initializers.RandomNormal"
+            },
+            "uid_features": {
+                "config": {
+                    "stddev": 0.0010311187378912055
+                },
+                "obj": "tf.keras.initializers.RandomNormal"
+            }
+        },
+        "model": "ordrec",
+        "num_hidden": 512,
+        "num_items": 10678,
+        "num_users": 69879,
+        "regularizers": {
+            "iid_beta": {
+                "l2": 0.13659274470563396,
+                "obj": "tf.keras.regularizers.L2"
+            },
+            "iid_bias": {
+                "l2": 0.2237069732185985,
+                "obj": "tf.keras.regularizers.L2"
+            },
+            "iid_features": {
+                "l2": 9.131035970310991,
+                "obj": "tf.keras.regularizers.L2"
+            },
+            "uid_beta": {
+                "l2": 0.12620971501789832,
+                "obj": "tf.keras.regularizers.L2"
+            },
+            "uid_bias": {
+                "l2": 0.112899897395422,
+                "obj": "tf.keras.regularizers.L2"
+            },
+            "uid_features": {
+                "l2": 0.030020420667581392,
+                "obj": "tf.keras.regularizers.L2"
+            }
+        },
+        "t1_mode": 1,
+        "thresholds_use_item": false,
+        "use_biases": false
+    },
+    "param_remapping": [
+        [
+            [
+                "training_params",
+                "callbacks",
+                1,
+                "RankingEvaluationCallback",
+                "params",
+                "data_path"
+            ],
+            [
+                "data_params",
+                "extra",
+                "VALIDATION_RANKING_DS_PATH"
+            ]
+        ],
+        [
+            [
+                "evaluation_params",
+                "callbacks",
+                0,
+                "ExportEvalPredictionsCallback",
+                "params",
+                "data_path"
+            ],
+            [
+                "data_params",
+                "extra",
+                "TEST_RANKING_DS_PATH"
+            ]
+        ],
+        [
+            [
+                "evaluation_params",
+                "callbacks",
+                0,
+                "ExportEvalPredictionsCallback",
+                "params",
+                "export_path"
+            ],
+            [
+                "meta_params",
+                "run_log_path"
+            ]
+        ]
+    ],
+    "training_params": {
+        "callbacks": [
+            {
+                "EarlyStopping": {
+                    "min_delta": 0.0005,
+                    "monitor": "val_bins_mean_root_mean_squared_error",
+                    "patience": 10,
+                    "restore_best_weights": true,
+                    "verbose": true
+                }
+            },
+            {
+                "RankingEvaluationCallback": {
+                    "params": {
+                        "batch_size": 1000,
+                        "metrics": {
+                            "bins_mean": [
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mean_ndcg@10",
+                                        "topn": 10
+                                    }
+                                ],
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mean_ndcg@3",
+                                        "topn": 3
+                                    }
+                                ]
+                            ],
+                            "bins_mode": [
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "median_ndcg@10",
+                                        "topn": 10
+                                    }
+                                ],
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "median_ndcg@3",
+                                        "topn": 3
+                                    }
+                                ]
+                            ]
+                        },
+                        "name": "val"
+                    }
+                }
+            }
+        ],
+        "epochs": 50,
+        "verbose": 1
+    }
+}

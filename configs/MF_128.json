@@ -1,0 +1,206 @@
+{
+    "compilation_params": {
+        "loss": {
+            "pred": [
+                "mse"
+            ]
+        },
+        "metrics": {
+            "pred": [
+                "rmse",
+                [
+                    "rating_metrics.AdaptedAccuracy",
+                    {
+                        "bin_size": 0.5
+                    }
+                ]
+            ]
+        },
+        "optimizer": {
+            "learning_rate": 0.001,
+            "obj": "keras.optimizers.Adam"
+        }
+    },
+    "data_params": {
+        "extra": {
+            "TEST_RANKING_DS_PATH": "../test/*.csv",
+            "VALIDATION_RANKING_DS_PATH": "validation/*.csv"
+        },
+        "general": {
+            "batch_size": 8192,
+            "label_name": "rating",
+            "shuffle_buffer_size": 10000
+        },
+        "params": {
+            "dataset": "ml-10m",
+            "format": "csv",
+            "num_splits_inner": 1,
+            "num_splits_outer": 10,
+            "strategy": "user_random",
+            "test_pc": 1,
+            "validation_pc": 0.05,
+            "xval_inner": false,
+            "xval_outer": true
+        },
+        "test": {
+            "shuffle": false
+        },
+        "train": {
+            "shuffle": true
+        },
+        "validation": {
+            "shuffle": false
+        }
+    },
+    "evaluation_params": {
+        "callbacks": [
+            {
+                "ExportEvalPredictionsCallback": {
+                    "params": {
+                        "batch_size": 4096,
+                        "export_path": null,
+                        "run_on_test_end": true,
+                        "validation_data": null
+                    }
+                }
+            }   
+        ]
+    },
+    "meta_params": {
+        "guided_search_optimization": {
+            "monitor": "val_root_mean_squared_error",
+            "type": "min"
+        },
+        "log_root": "logs"
+    },
+    "model_params": {
+        "bias_initializer": {
+            "obj": "tf.keras.initializers.Zeros"
+        },
+        "initializer": {
+            "config": {
+                "stddev": 0.002577553958365328
+            },
+            "obj": "tf.keras.initializers.RandomNormal"
+        },
+        "model": "mf",
+        "num_hidden": 128,
+        "num_items": 10678,
+        "num_users": 69879,
+        "regularizer": {
+            "l2": 0.037438325237344985,
+            "obj": "tf.keras.regularizers.L2"
+        }
+    },
+    "param_remapping": [
+        [
+            [
+                "training_params",
+                "callbacks",
+                1,
+                "RankingEvaluationCallback",
+                "params",
+                "data_path"
+            ],
+            [
+                "data_params",
+                "extra",
+                "VALIDATION_RANKING_DS_PATH"
+            ]
+        ],
+        [
+            [
+                "evaluation_params",
+                "callbacks",
+                0,
+                "ExportEvalPredictionsCallback",
+                "params",
+                "data_path"
+            ],
+            [
+                "data_params",
+                "extra",
+                "TEST_RANKING_DS_PATH"
+            ]
+        ],
+        [
+            [
+                "evaluation_params",
+                "callbacks",
+                0,
+                "ExportEvalPredictionsCallback",
+                "params",
+                "export_path"
+            ],
+            [
+                "meta_params",
+                "run_log_path"
+            ]
+        ],
+        [
+            [
+                "training_params", 
+                "callbacks", 
+                2, 
+                "ModelCheckpoint", 
+                "filepath"
+            ],
+            [
+                "meta_params", 
+                "run_log_path"
+            ]
+        ]
+    ],
+    "training_params": {
+        "callbacks": [
+            {
+                "EarlyStopping": {
+                    "min_delta": 0.001,
+                    "monitor": "val_pred_root_mean_squared_error",
+                    "patience": 10,
+                    "restore_best_weights": true,
+                    "verbose": true
+                }
+            },
+            {
+                "RankingEvaluationCallback": {
+                    "params": {
+                        "batch_size": 1000,
+                        "metrics": {
+                            "pred_": [
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mean_ndcg@10",
+                                        "topn": 10
+                                    }
+                                ],
+                                [
+                                    "ranking_metrics.NDCGMetric",
+                                    {
+                                        "gain_fn": "lambda x: x",
+                                        "name": "mean_ndcg@3",
+                                        "topn": 3
+                                    }
+                                ]
+                            ]
+                        },
+                        "name": "val"
+                    }
+                }
+            },
+            {
+                "ModelCheckpoint": {
+                    "monitor": "val_pred_root_mean_squared_error",
+                    "verbose": 1,
+                    "save_best_only": true,
+                    "save_weights_only": false,
+                    "filepath": null
+                }
+            }
+        ],
+        "epochs": 50,
+        "verbose": 1
+    }
+}
