@@ -4,7 +4,7 @@ This repository contains the code used for the experiments in "A Lightweight Met
 Citation
 --------
 
-If you use this code to produce results for your scientific publication, or if you share a copy or fork, please refer to our ICTIR 2022 paper:
+If you use this code to produce results for your scientific publication, or if you share a copy or fork, please refer to our RecSys 2023 paper:
 ```
 @inproceedings{knyazev2023alightweight,
   Author = {Knyazev, Norman and Oosterhuis, Harrie},
@@ -23,7 +23,7 @@ The contents of this repository are licensed under the [MIT license](LICENSE). I
 Usage
 -------
 
-This code makes use of [Python 3](https://www.python.org/) and the following packages: [jupyter](https://jupyter.org), [matplotlib](https://matplotlib.org), [numpy](https://numpy.org/), [scipy](https://scipy.org), [pandas](https://pandas.pydata.org), [tqdm](https://tqdm.github.io), [dotenv](https://pypi.org/project/python-dotenv/) and [tensorflow==2.12.0](https://tensorflow.org). Make sure they are installed.
+This code makes use of [Python 3](https://www.python.org/) and the following packages: [jupyter](https://jupyter.org), [matplotlib](https://matplotlib.org), [numpy](https://numpy.org/), [scipy](https://scipy.org), [pandas](https://pandas.pydata.org), [tqdm](https://tqdm.github.io), [dotenv](https://pypi.org/project/python-dotenv/), [tensorflow==2.12.0](https://tensorflow.org) and [tensorflow-probability](https://www.tensorflow.org/probability). Make sure they are installed.
 
 The code can be accessed by running `jupyter notebook .` in the project folder and navigating to `src/notebooks`.
 
