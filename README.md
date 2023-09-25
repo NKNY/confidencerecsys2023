@@ -1,5 +1,5 @@
 # A Lightweight Method for Modeling Confidence in Recommendations with Learned Beta Distributions
-This repository contains the code used for the experiments in "A Lightweight Method for Modeling Confidence in Recommendations with Learned Beta Distributions" published at RecSys 2023 ([preprint available](https://arxiv.org/abs/----.----)).
+This repository contains the code used for the experiments in "A Lightweight Method for Modeling Confidence in Recommendations with Learned Beta Distributions" published at RecSys 2023 ([open access article](https://dl.acm.org/doi/abs/10.1145/3604915.3608788)).
 
 Citation
 --------
