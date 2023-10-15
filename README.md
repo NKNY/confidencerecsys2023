@@ -8,7 +8,7 @@ If you use this code to produce results for your scientific publication, or if y
 ```
 @inproceedings{knyazev2023alightweight,
   Author = {Knyazev, Norman and Oosterhuis, Harrie},
-  Booktitle = {Seventeenth ACM Conference on Recommender Systems (RecSys '23)}
+  Booktitle = {Seventeenth ACM Conference on Recommender Systems (RecSys '23)},
   Organization = {ACM},
   Title = {A Lightweight Method for Modeling Confidence in Recommendations with Learned Beta Distributions},
   Year = {2023}
